@@ -5,20 +5,13 @@ import java.io.IOException;
 
 public class Main {
 
-    static String OriginalText;
-    static char[] TextArray;
-    static Stack stack;
-
     public static void main(String[] args) throws IOException { // read the text from the file, filter it and print the clean text
-        OriginalText = extractText();
+        String originalText = extractText();
 
-        int size = SizeText(OriginalText);
+        Decryptor decryptor = new Decryptor(originalText);
+        decryptor.filterText();
 
-        stack = new Stack(size);
-
-        FilterText();
-
-        System.out.println("Texto desencriptado: " + SetupText());
+        System.out.println("Texto desencriptado: " + decryptor.getCleanText());
     }
 
     public static String extractText() throws IOException {
@@ -30,40 +23,5 @@ public class Main {
             }
         }
         return text;
-    }
-
-    public static int SizeText(String text) {
-        TextArray = text.toCharArray();
-        return TextArray.length;
-    }
-
-    public static void FilterText() { // filter using stack to reverse the text between parentheses and remove the parentheses from the original text
-        for (int i = 0; i < TextArray.length; i++) {
-            if (TextArray[i] == '(') {
-                TextArray[i] = 0;
-                int inicio = i + 1;
-                i++;
-                while (i < TextArray.length && TextArray[i] != ')') { // push the characters between parentheses to the stack
-                    stack.push(TextArray[i]);
-                    i++;
-                }
-                if (i < TextArray.length && TextArray[i] == ')') { // pop the characters from the stack and replace the original text with the reversed text
-                    TextArray[i] = 0;
-                    for (int j = inicio; j < i; j++) {
-                        TextArray[j] = (char) stack.pop();
-                    }
-                }
-            }
-        }
-    }
- 
-    public static String SetupText() { // remove the null characters from the original text and return the clean text
-        String textClean = "";
-        for (char c : TextArray) {
-            if (c != 0) {
-                textClean += c;
-            }
-        }
-        return textClean;
     }
 }
